@@ -1,0 +1,29 @@
+{
+    "name": "sglms/label-printer",
+    "description": "Label Printer with Barcodes",
+    "type": "library",
+    "license": "MIT",
+    "homepage": "https://sglms.com",
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:sglms/gtin-gs1.git"
+        }
+    ],
+    "require": {
+        "mpdf/mpdf": "^8.0",
+        "sglms/gs1-gtin": "^1.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Sglms\\LabelPrinter\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "James",
+            "email": "james@sglms.com",
+            "role": "Owner/Developer"
+        }
+    ]
+}
