@@ -4,8 +4,50 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "044a3c36080aeaa7fa505c08d3a350ad",
+    "content-hash": "e2462d6ab3e97d68823171a1c29e8ef3",
     "packages": [
+        {
+            "name": "jaimercz/html-builder",
+            "version": "0.3.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/jaimercz/html-builder.git",
+                "reference": "a3d4439f04749da3b72e7acdb4e40c35ec156e37"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/jaimercz/html-builder/zipball/a3d4439f04749da3b72e7acdb4e40c35ec156e37",
+                "reference": "a3d4439f04749da3b72e7acdb4e40c35ec156e37",
+                "shasum": ""
+            },
+            "require": {
+                "php": "^8.0"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "JamesRCZ\\HtmlBuilder\\": "src/"
+                },
+                "files": [
+                    "src/functions.php"
+                ]
+            },
+            "license": [
+                "All rights reserved."
+            ],
+            "authors": [
+                {
+                    "name": "James",
+                    "email": "james@sglms.com"
+                }
+            ],
+            "description": "A very simple HTML library.",
+            "support": {
+                "source": "https://github.com/jaimercz/html-builder/tree/0.3.1",
+                "issues": "https://github.com/jaimercz/html-builder/issues"
+            },
+            "time": "2022-06-18T02:05:52+00:00"
+        },
         {
             "name": "mpdf/mpdf",
             "version": "v8.1.2",
