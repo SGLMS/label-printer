@@ -8,9 +8,14 @@
         {
             "type": "vcs",
             "url": "git@github.com:sglms/gtin-gs1.git"
+        },
+        {
+            "type": "vcs",
+            "url": "git@github.com:jaimercz/html-builder.git"
         }
     ],
     "require": {
+        "jaimercz/html-builder": "^0.3",
         "mpdf/mpdf": "^8.0",
         "sglms/gs1-gtin": "^1.0"
     },
