@@ -35,7 +35,7 @@ use function JamesRCZ\HtmlBuilder\div;
 class Label
 {
     protected \Sglms\Gs1Gtin\Gtin $gtin;
-    protected \Sglms\Gs1Gtin\Gs1  $gs1;
+    protected \JamesRCZ\HtmlBuilder\HtmlBuilder $html;
     protected array               $pdfConfiguration = [
         'mode'          => "utf-8",
         'format'        => [100,100],
@@ -55,37 +55,51 @@ class Label
         .text-xs {font-size:10px;}
         .text-sm {font-size:12px;}
         .text-xl {font-size:36px;}
-        .text-2xl {font-size:42px;}
+        .text-2xl {font-size:48px;}
         .w-full{width:100%;}
+        .table-info {font-size:11px;font-family:monospace;width:100%;}
+        .table-info tr td:nth-child(2) {font-weight:bold;}
+        .table-info tr td:nth-child(3) {font-weight:bold;text-align:right;}
     ";
+
+    protected \Sglms\Gs1Gtin\Gs1  $gs1;
 
     public int      $productid;
     public string   $productName;
     public string   $clientid;
     public string   $clientName;
+    public string   $sku;
 
     /**
      * Constructor
      *
-     * @param $number     Number
-     * @param $productid  Product Identifier
-     * @param $clientid   Client Identifier [Optional]
-     * @param $clientName Client [Optional]
+     * @param $number      Number
+     * @param $productid   Product Identifier
+     * @param $clientid    Client Identifier [Optional]
+     * @param $productName Product Name [Optional]
+     * @param $clientName  Client [Optional]
      **/
     public function __construct(
         int $number,
-        int $productid = 0,
-        ?string $clientid = null,
-        ?string $clientName = null
+        int $productid,
+        string $clientid,
+        ?string $productName = null,
+        ?string $clientName  = null
     ) {
         $this->number       = $number;
         $this->clientid     = $clientid ?? '1';
         $this->clientName   = $clientName ?? $this->clientid;
         $this->productid    = $productid ?? 1;
+        $this->productName  = $productName ?? _("n/a");
+        $this->sku          = 'XX';
         $this->gtin         = Gtin::create($this->productid, $this->clientid, 2);
-        $this->gs1          = new Gs1(
-            "(01)" . $this->gtin
-        );
+        $this->gs1          = new Gs1("(01)" . $this->gtin . "(3102)0(3302)0(37)0");
+    }
+
+    public function fromGS1(string $gs1)
+    {
+        $this->gs1  = new \Sglms\Gs1Gtin\Gs1($gs1);
+        $this->gtin = new \Sglms\Gs1Gtin\Gtin($this->gs1->gtin);
     }
 
     /**
@@ -118,10 +132,40 @@ class Label
             'img',
             null,
             [
-                'src'   => $this->gs1->getBarcodeSource(1, 16),
+                'src'   => $this->gs1->getBarcodeSource(1, 32),
                 'style' => "width: 8cm;",
                 'class' => "w-full"
             ]
+        );
+    }
+
+    /**
+     * Get GTIN Tag
+     *
+     * @return string
+     **/
+    protected function getGtinTag()
+    {
+        return div(
+            div("GTIN-14:", 'text-xs')
+            . div((string) HtmlBuilder::create('img', null, ['src'=> $this->gtin->getBarcodeSource(2, 24)]), 'center')
+            . div((string) $this->gtin, 'bold center text-sm mono'),
+            'text-sm border'
+        );
+    }
+
+    /**
+     * Get GS1 Tag
+     *
+     * @return string
+     **/
+    protected function getGs1Tag()
+    {
+        return div(
+            div("GS1-128:", 'text-xs')
+            . div((string) $this->getGs1Barcode(), 'center')
+            . div((string) $this->gs1, 'center text-xs'),
+            'text-sm border'
         );
     }
 
@@ -134,19 +178,30 @@ class Label
     {
         $table = Html::table(
             [
-                [_("Client ID"), div($this->clientid, 'bold')],
-                [_("Client"), div($this->clientName, 'bold')],
-                [_("Product ID"), div((string) $this->productid, 'bold')],
-                [_("Product"), div(substr((string) $this->productName, 0, 42), 'bold')],
                 [
-                    _("GTIN"),
-                    (string) HtmlBuilder::create('img', null, ['src'=> $this->gtin->getBarcodeSource(2, 24)])
-                    . div((string) $this->gtin, 'bold center text-sm mono')
+                    _("SKU"),
+                    substr($this->sku, 0, 32),
+                    '-'
                 ],
+                [
+                    _("Product"),
+                    substr($this->productName, 0, 32),
+                    (string) $this->productid,
+                ],
+                [
+                    _("Client"),
+                    $this->clientName,
+                    $this->clientid
+                ],
+                [
+                    _("Weight")."/"._("Units"),
+                    (string) $this->gs1->grossWeight . _("(Gross)"),
+                    $this->gs1->units
+                ]
             ],
             [],
             [],
-            'w-full text-sm'
+            'table-info'
         );
         return $table;
     }
@@ -156,25 +211,37 @@ class Label
      *
      * @return \Mpdf\Mpdf
      **/
-    public function generatePDF()
+    public function getPDF()
     {
         $pdf = new \Mpdf\Mpdf($this->pdfConfiguration);
-
         $pdf->WriteHTML($this->css, \Mpdf\HTMLParserMode::HEADER_CSS);
-        $pdf->WriteHTML(div((string) $this->getLabelBarcode(), "center"));
-        $pdf->WriteHTML(div((string) $this->number, "bold mono center border text-2xl m-1"));
-        $pdf->WriteHTML($this->getInfoTable());
-        $pdf->WriteHTML(
-            div(
-                div("GS1-128 : ", 'text-xs')
-                . div((string) $this->getGs1Barcode(), "center")
-                . div((string) $this->gs1, 'text-xs bold center mono'),
-                'border p-1'
-            )
-        );
-        $pdf->WriteHTML("----------------");
-        $pdf->WriteHTML(div("SGLMS Ingeniería y Gestión", "text-2xs"));
+        $pdf->WriteHTML($this->render());
 
         return $pdf;
+    }
+
+    /**
+     * Render Label
+     *
+     * @param $html Render pure HTML [false]
+     *
+     * @return string
+     **/
+    public function render(?bool $html = false)
+    {
+        $this->html = HtmlBuilder::create('div', null, 'mono');
+        if ($html) {
+            $this->html->setAttribute('style', "width:10cm;height:10cm;");
+            $this->html->addContent(HtmlBuilder::create('style', $this->css));
+        }
+        $this->html->addContent(div((string) $this->getLabelBarcode(), 'center'));
+        $this->html->addContent(div((string) $this->number, 'text-2xl center bold border m-1'));
+        $this->html->addContent($this->getInfoTable());
+        $this->html->addContent($this->getGtinTag());
+        $this->html->addContent($this->getGs1Tag());
+        $this->html->addContent("-----");
+        $this->html->addContent(div("SGLMS Ingeniería y Gestión", "text-2xs"));
+
+        return $this->html;
     }
 }

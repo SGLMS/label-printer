@@ -12,12 +12,25 @@
  **/
 
 use Sglms\LabelPrinter\Label;
+use Sglms\LabelPrinter\Printer;
 
 require "vendor/autoload.php";
 
-$label              = new Label(12345678);
+$label              = new Label(12345678, 555, '777');
 $label->clientName  = "SGLMS";
-$label->clientid    = 9999;
-$label->productid   = 12345678;
-$label->productName = "Nombre (o lista) de Producto";
-$label->generatePDF()->output();
+$label->productName = "Producto para Demostración";
+$label->sku = "PRDCTNN-XX-DS-12345678-123456789000000";
+
+// Get additional product information from GS1-128
+$label->fromGS1("(01)999912345678(37)18(3302)987654(3102)123456");
+
+// Create the printer (PDF)
+$printer = new Printer();
+
+// Add labels
+$printer->addLabel($label);
+
+$label2  = new Label(987654, 555, '777');
+$printer->addLabel($label2);
+
+$printer->output();

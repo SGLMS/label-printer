@@ -551,16 +551,16 @@
         },
         {
             "name": "sglms/gs1-gtin",
-            "version": "1.1.1",
+            "version": "1.1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SGLMS/gtin-gs1.git",
-                "reference": "8e49d8b986bf783c70b25a0c95f8cbb7a2b78f19"
+                "reference": "0cc824cbe5e857a109e7777c3547dd03463ede6d"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SGLMS/gtin-gs1/zipball/8e49d8b986bf783c70b25a0c95f8cbb7a2b78f19",
-                "reference": "8e49d8b986bf783c70b25a0c95f8cbb7a2b78f19",
+                "url": "https://api.github.com/repos/SGLMS/gtin-gs1/zipball/0cc824cbe5e857a109e7777c3547dd03463ede6d",
+                "reference": "0cc824cbe5e857a109e7777c3547dd03463ede6d",
                 "shasum": ""
             },
             "require": {
@@ -584,10 +584,10 @@
             "description": "Classes to create or validate GTIN (Global Trade Item Number)",
             "homepage": "https://sglms.com",
             "support": {
-                "source": "https://github.com/SGLMS/gtin-gs1/tree/1.1.1",
+                "source": "https://github.com/SGLMS/gtin-gs1/tree/1.1.2",
                 "issues": "https://github.com/SGLMS/gtin-gs1/issues"
             },
-            "time": "2022-08-31T03:27:44+00:00"
+            "time": "2022-09-03T00:06:30+00:00"
         }
     ],
     "packages-dev": [],
