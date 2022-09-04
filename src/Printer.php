@@ -37,6 +37,7 @@ class Printer extends \Mpdf\Mpdf
     protected string              $css = "
         .bold{font-weight:bold;}
         .center{text-align:center;}
+        .text-right{text-align:right;}
         .mono{font-family:monospace;}
         .border{border: 1px solid black;}
         .m-1{margin: .1em;}
