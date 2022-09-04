@@ -19,7 +19,8 @@ require "vendor/autoload.php";
 $label              = new Label(12345678, 555, '777');
 $label->clientName  = "SGLMS";
 $label->productName = "Producto para Demostración";
-$label->sku = "PRDCTNN-XX-DS-12345678-123456789000000";
+$label->sku         = "PRDCTNN-XX-DS-12345678-123456789000000";
+$label->firm        = "SGLMS";
 
 // Get additional product information from GS1-128
 $label->fromGS1("(01)999912345678(37)18(3302)987654(3102)123456");

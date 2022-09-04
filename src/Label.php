@@ -35,6 +35,7 @@ use function JamesRCZ\HtmlBuilder\div;
 class Label
 {
     protected \Sglms\Gs1Gtin\Gtin $gtin;
+    protected \Sglms\Gs1Gtin\Gs1  $gs1;
     protected \JamesRCZ\HtmlBuilder\HtmlBuilder $html;
     protected array               $pdfConfiguration = [
         'mode'          => "utf-8",
@@ -47,6 +48,7 @@ class Label
     protected string              $css = "
         .bold{font-weight:bold;}
         .center{text-align:center;}
+        .text-right{text-align:right;}
         .mono{font-family:monospace;}
         .border{border: 1px solid black;}
         .m-1{margin: .1em;}
@@ -62,13 +64,13 @@ class Label
         .table-info tr td:nth-child(3) {font-weight:bold;text-align:right;}
     ";
 
-    protected \Sglms\Gs1Gtin\Gs1  $gs1;
 
     public int      $productid;
     public string   $productName;
     public string   $clientid;
     public string   $clientName;
     public string   $sku;
+    public string   $generator = "SGLMS Label Printer";
 
     /**
      * Constructor
@@ -96,6 +98,13 @@ class Label
         $this->gs1          = new Gs1("(01)" . $this->gtin . "(3102)0(3302)0(37)0");
     }
 
+    /**
+     * Load info from GS1 String
+     *
+     * @param $gs1 GS1-128 String
+     *
+     * @return void
+     **/
     public function fromGS1(string $gs1)
     {
         $this->gs1  = new \Sglms\Gs1Gtin\Gs1($gs1);
@@ -239,8 +248,8 @@ class Label
         $this->html->addContent($this->getInfoTable());
         $this->html->addContent($this->getGtinTag());
         $this->html->addContent($this->getGs1Tag());
-        $this->html->addContent("-----");
-        $this->html->addContent(div("SGLMS Ingeniería y Gestión", "text-2xs"));
+        $this->html->addContent(div("__________", 'text-right text-2xs'));
+        $this->html->addContent(div($this->generator, "text-2xs text-right"));
 
         return $this->html;
     }
