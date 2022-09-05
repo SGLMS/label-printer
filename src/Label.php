@@ -71,6 +71,7 @@ class Label
     public string   $clientName;
     public string   $sku;
     public string   $generator = "SGLMS Label Printer";
+    public float    $weight = 0;
 
     /**
      * Constructor
@@ -93,7 +94,7 @@ class Label
         $this->clientName   = $clientName ?? $this->clientid;
         $this->productid    = $productid ?? 1;
         $this->productName  = $productName ?? _("n/a");
-        $this->sku          = 'XX';
+        $this->sku          = '-';
         $this->gtin         = Gtin::create($this->productid, $this->clientid, 2);
         $this->gs1          = new Gs1("(01)" . $this->gtin . "(3102)0(3302)0(37)0");
     }
@@ -107,8 +108,9 @@ class Label
      **/
     public function fromGS1(string $gs1)
     {
-        $this->gs1  = new \Sglms\Gs1Gtin\Gs1($gs1);
-        $this->gtin = new \Sglms\Gs1Gtin\Gtin($this->gs1->gtin);
+        $this->gs1      = new \Sglms\Gs1Gtin\Gs1($gs1);
+        $this->gtin     = new \Sglms\Gs1Gtin\Gtin($this->gs1->gtin);
+        $this->weight   = $this->gs1->grossWeight;
     }
 
     /**
@@ -204,7 +206,7 @@ class Label
                 ],
                 [
                     _("Weight")."/"._("Units"),
-                    (string) $this->gs1->grossWeight . _("(Gross)"),
+                    (string) $this->weight . _("(Gross)"),
                     $this->gs1->units
                 ]
             ],
