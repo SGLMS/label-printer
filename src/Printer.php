@@ -33,6 +33,7 @@ class Printer extends \Mpdf\Mpdf
         'margin_bottom' => 5,
         'margin_left'   => 5,
         'margin_right'  => 5,
+        'tempDir'       => TMPPATH
     ];
     protected string              $css = "
         .bold{font-weight:bold;}

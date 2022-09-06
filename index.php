@@ -16,6 +16,8 @@ use Sglms\LabelPrinter\Printer;
 
 require "vendor/autoload.php";
 
+define('TMPPATH', '/tmp'); // ¡¡¡IMPORTANT!!!
+
 $label              = new Label(12345678, 555, '777');
 $label->clientName  = "SGLMS";
 $label->productName = "Producto para Demostración";

@@ -10,6 +10,8 @@ We use this library for our own projects. It is not intended for general use; it
 use Sglms\LabelPrinter\Label;
 use Sglms\LabelPrinter\Printer;
 
+define('TMPPATH', '/tmp'); // ¡¡¡IMPORTANT!!!
+
 // Parameters: Item (Pallet) Number, Product Reference Number, Company Prefix
 $label              = new Label(12345678, 555, '777');
 $label->clientName  = "SGLMS";
