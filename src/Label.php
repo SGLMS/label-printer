@@ -57,7 +57,7 @@ class Label
         .text-xs {font-size:10px;}
         .text-sm {font-size:12px;}
         .text-xl {font-size:36px;}
-        .text-2xl {font-size:48px;}
+        .text-2xl {font-size:60px;}
         .w-full{width:100%;}
         .table-info {font-size:11px;font-family:monospace;width:100%;}
         .table-info tr td:nth-child(2) {font-weight:bold;}
@@ -70,8 +70,9 @@ class Label
     public string   $clientid;
     public string   $clientName;
     public string   $sku;
-    public string   $generator = "SGLMS Label Printer";
     public float    $weight = 0;
+    public float    $units  = 0;
+    public string   $generator = "SGLMS Label Printer";
 
     /**
      * Constructor
@@ -96,7 +97,7 @@ class Label
         $this->productName  = $productName ?? _("n/a");
         $this->sku          = '-';
         $this->gtin         = Gtin::create($this->productid, $this->clientid, 2);
-        $this->gs1          = new Gs1("(01)" . $this->gtin . "(3102)0(3302)0(37)0");
+        $this->gs1          = new Gs1("(01)" . $this->gtin);
     }
 
     /**
@@ -111,6 +112,7 @@ class Label
         $this->gs1      = new \Sglms\Gs1Gtin\Gs1($gs1);
         $this->gtin     = new \Sglms\Gs1Gtin\Gtin($this->gs1->gtin);
         $this->weight   = $this->gs1->grossWeight;
+        $this->units    = $this->gs1->units;
     }
 
     /**
@@ -127,7 +129,7 @@ class Label
             [
                 'src'   => "data:image/png;base64,"
                 . base64_encode($barcode->getBarcode((string) $this->number, $barcode::TYPE_CODE_128)),
-                'style' => "width: 8cm; height: 1.2cm;",
+                'style' => "width: 8.75cm; height: 1cm;",
             ]
         );
     }
@@ -144,7 +146,7 @@ class Label
             null,
             [
                 'src'   => $this->gs1->getBarcodeSource(1, 32),
-                'style' => "width: 8cm;",
+                'style' => "width: 8.75cm; height: 1cm;",
                 'class' => "w-full"
             ]
         );
@@ -173,9 +175,8 @@ class Label
     protected function getGs1Tag()
     {
         return div(
-            div("GS1-128:", 'text-xs')
-            . div((string) $this->getGs1Barcode(), 'center')
-            . div((string) $this->gs1, 'center text-xs'),
+            div((string) $this->getGs1Barcode(), 'center p-1')
+            . div((string) $this->gs1, 'center text-xs bold'),
             'text-sm border'
         );
     }
@@ -190,25 +191,25 @@ class Label
         $table = Html::table(
             [
                 [
-                    _("SKU"),
-                    substr($this->sku, 0, 32),
+                    /* _("SKU"), */
+                    substr($this->sku, 0, 24),
                     '-'
                 ],
                 [
-                    _("Product"),
-                    substr($this->productName, 0, 32),
+                    /* _("Weight")."/"._("Units"), */
+                    "(&times;" . (string) $this->units . ") " . _("Unit") . " =>",
+                    (string) $this->weight . "K",
+                ],
+                [
+                    /* _("Product"), */
+                    substr($this->productName, 0, 24),
                     (string) $this->productid,
                 ],
                 [
-                    _("Client"),
+                    /* _("Client"), */
                     $this->clientName,
-                    $this->clientid
+                    "ID" . $this->clientid
                 ],
-                [
-                    _("Weight")."/"._("Units"),
-                    (string) $this->weight . _("(Gross)"),
-                    $this->gs1->units
-                ]
             ],
             [],
             [],
@@ -248,7 +249,7 @@ class Label
         $this->html->addContent(div((string) $this->getLabelBarcode(), 'center'));
         $this->html->addContent(div((string) $this->number, 'text-2xl center bold border m-1'));
         $this->html->addContent($this->getInfoTable());
-        $this->html->addContent($this->getGtinTag());
+        /* $this->html->addContent($this->getGtinTag()); */
         $this->html->addContent($this->getGs1Tag());
         $this->html->addContent(div("__________", 'text-right text-2xs'));
         $this->html->addContent(div($this->generator, "text-2xs text-right"));
