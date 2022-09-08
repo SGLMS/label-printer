@@ -46,12 +46,13 @@ class Printer extends \Mpdf\Mpdf
         .text-2xs {font-size:8px;}
         .text-xs {font-size:10px;}
         .text-sm {font-size:12px;}
+        .text-lg {font-size:24px;}
         .text-xl {font-size:36px;}
-        .text-2xl {font-size:48px;}
+        .text-2xl {font-size:60px;}
         .w-full{width:100%;}
-        .table-info {font-size:11px;font-family:monospace;width:100%;}
-        .table-info tr td:nth-child(2) {font-weight:bold;}
-        .table-info tr td:nth-child(3) {font-weight:bold;text-align:right;}
+        .table-info {font-size:18px;font-family:Verdana,monospace;width:100%;}
+        .table-info tr td:nth-child(1) {font-weight:bold;}
+        .table-info tr td:nth-child(2) {font-weight:bold;text-align:right;}
     ";
 
     /**
