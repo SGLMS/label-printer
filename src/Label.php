@@ -176,7 +176,7 @@ class Label
     {
         return div(
             div((string) $this->getGs1Barcode(), 'center p-1')
-            . div((string) $this->gs1, 'center text-xs bold'),
+            . div((string) $this->gs1, 'center text-2xs bold'),
             'text-sm border'
         );
     }
