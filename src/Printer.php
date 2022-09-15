@@ -63,7 +63,10 @@ class Printer extends \Mpdf\Mpdf
     public function __construct(array $config = [])
     {
         parent::__construct($config ?: $this->pdfConfiguration);
-        $this->WriteHTML($this->css, \Mpdf\HTMLParserMode::HEADER_CSS);
+        $this->WriteHTML(
+            $this->css,
+            \Mpdf\HTMLParserMode::HEADER_CSS
+        );
     }
 
     /**
