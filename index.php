@@ -18,7 +18,7 @@ require "vendor/autoload.php";
 
 define('TMPPATH', '/tmp'); // ¡¡¡IMPORTANT!!!
 
-$label              = new Label(12345678, 555, '777');
+$label              = new Label(12345678901234, 555, '777');
 $label->clientName  = "SGLMS";
 $label->productName = "Producto para Demostración";
 $label->sku         = "PRDCTNN-XX-DS-12345678-123456789000000";
@@ -32,6 +32,7 @@ $printer = new Printer();
 
 // Add labels
 $printer->addLabel($label);
+$printer->addPage();
 
 $label2  = new Label(987654, 555, '777');
 $printer->addLabel($label2);

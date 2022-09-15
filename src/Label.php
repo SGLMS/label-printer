@@ -246,14 +246,32 @@ class Label
             $this->html->setAttribute('style', "width:10cm;height:10cm;");
             $this->html->addContent(HtmlBuilder::create('style', $this->css));
         }
-        $this->html->addContent(div((string) $this->getLabelBarcode(), 'center'));
-        $this->html->addContent(div((string) $this->number, 'text-2xl center bold border m-1'));
+        $this->html->addContent(
+            div(
+                (string) $this->getLabelBarcode(),
+                [
+                    'class' => 'center page-break-before',
+                ]
+            )
+        );
+        $this->html->addContent(
+            div(
+                (string) $this->number,
+                'center bold border m-1' . (strlen((string) $this->number) > 9 ? ' text-xl ' : ' text-2xl ')
+            )
+        );
         $this->html->addContent($this->getInfoTable());
         /* $this->html->addContent($this->getGtinTag()); */
         $this->html->addContent($this->getGs1Tag());
         $this->html->addContent(div("__________", 'text-right text-2xs'));
-        $this->html->addContent(div($this->generator, "text-2xs text-right"));
-
+        $this->html->addContent(
+            div(
+                $this->generator,
+                [
+                    'class' => 'text-2xs text-right',
+                ]
+            )
+        );
         return $this->html;
     }
 }
