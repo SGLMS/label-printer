@@ -95,7 +95,7 @@ class Label
         $this->clientName   = $clientName ?? $this->clientid;
         $this->productid    = $productid ?? 1;
         $this->productName  = $productName ?? _("n/a");
-        $this->sku          = '-';
+        $this->sku          = (string) $number;
         $this->gtin         = Gtin::create($this->productid, $this->clientid, 2);
         $this->gs1          = new Gs1("(01)" . $this->gtin);
     }
@@ -193,7 +193,7 @@ class Label
                 [
                     /* _("SKU"), */
                     substr($this->sku, 0, 24),
-                    '-'
+                    ''
                 ],
                 [
                     /* _("Weight")."/"._("Units"), */

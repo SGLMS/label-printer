@@ -47,7 +47,7 @@ class Printer extends \Mpdf\Mpdf
         .text-xs {font-size:10px;}
         .text-sm {font-size:12px;}
         .text-lg {font-size:24px;}
-        .text-xl {font-size:36px;}
+        .text-xl {font-size:32px;}
         .text-2xl {font-size:60px;}
         .w-full{width:100%;}
         .table-info {font-size:18px;font-family:Verdana,monospace;width:100%;}
