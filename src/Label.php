@@ -96,7 +96,7 @@ class Label
         $this->productid    = $productid ?? 1;
         $this->productName  = $productName ?? _("n/a");
         $this->sku          = (string) $number;
-        $this->gtin         = Gtin::create($this->productid, $this->clientid, 2);
+        $this->gtin         = Gtin::create($this->productid, $this->clientid, 'GTIN-14',  2);
         $this->gs1          = new Gs1("(01)" . $this->gtin);
     }
 
@@ -110,7 +110,7 @@ class Label
     public function fromGS1(string $gs1)
     {
         $this->gs1      = new \Sglms\Gs1Gtin\Gs1($gs1);
-        $this->gtin     = new \Sglms\Gs1Gtin\Gtin($this->gs1->gtin);
+        $this->gtin     = new \Sglms\Gs1Gtin\Gtin((int) $this->gs1->gtin);
         $this->weight   = $this->gs1->grossWeight;
         $this->units    = $this->gs1->units;
     }
