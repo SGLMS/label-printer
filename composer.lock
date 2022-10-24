@@ -8,16 +8,16 @@
     "packages": [
         {
             "name": "jaimercz/html-builder",
-            "version": "0.3.1",
+            "version": "0.3.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/jaimercz/html-builder.git",
-                "reference": "a3d4439f04749da3b72e7acdb4e40c35ec156e37"
+                "reference": "bebebda7c70e58849966be61fdf3ad83d62e472a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/jaimercz/html-builder/zipball/a3d4439f04749da3b72e7acdb4e40c35ec156e37",
-                "reference": "a3d4439f04749da3b72e7acdb4e40c35ec156e37",
+                "url": "https://api.github.com/repos/jaimercz/html-builder/zipball/bebebda7c70e58849966be61fdf3ad83d62e472a",
+                "reference": "bebebda7c70e58849966be61fdf3ad83d62e472a",
                 "shasum": ""
             },
             "require": {
@@ -43,10 +43,10 @@
             ],
             "description": "A very simple HTML library.",
             "support": {
-                "source": "https://github.com/jaimercz/html-builder/tree/0.3.1",
+                "source": "https://github.com/jaimercz/html-builder/tree/0.3.3",
                 "issues": "https://github.com/jaimercz/html-builder/issues"
             },
-            "time": "2022-06-18T02:05:52+00:00"
+            "time": "2022-09-05T20:06:28+00:00"
         },
         {
             "name": "mpdf/mpdf",
@@ -551,16 +551,16 @@
         },
         {
             "name": "sglms/gs1-gtin",
-            "version": "1.1.2",
+            "version": "1.2.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/SGLMS/gtin-gs1.git",
-                "reference": "0cc824cbe5e857a109e7777c3547dd03463ede6d"
+                "reference": "51c849a09c03b1817b2e7a11fbb8c49f7cad033b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/SGLMS/gtin-gs1/zipball/0cc824cbe5e857a109e7777c3547dd03463ede6d",
-                "reference": "0cc824cbe5e857a109e7777c3547dd03463ede6d",
+                "url": "https://api.github.com/repos/SGLMS/gtin-gs1/zipball/51c849a09c03b1817b2e7a11fbb8c49f7cad033b",
+                "reference": "51c849a09c03b1817b2e7a11fbb8c49f7cad033b",
                 "shasum": ""
             },
             "require": {
@@ -584,10 +584,10 @@
             "description": "Classes to create or validate GTIN (Global Trade Item Number)",
             "homepage": "https://sglms.com",
             "support": {
-                "source": "https://github.com/SGLMS/gtin-gs1/tree/1.1.2",
+                "source": "https://github.com/SGLMS/gtin-gs1/tree/1.2.0",
                 "issues": "https://github.com/SGLMS/gtin-gs1/issues"
             },
-            "time": "2022-09-03T00:06:30+00:00"
+            "time": "2022-10-24T19:07:05+00:00"
         }
     ],
     "packages-dev": [],
