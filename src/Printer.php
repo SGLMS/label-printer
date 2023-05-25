@@ -38,6 +38,8 @@ class Printer extends \Mpdf\Mpdf
     protected string              $css = "
         .bold{font-weight:bold;}
         .center{text-align:center;}
+        .text-center{text-align:center;}
+        .line-fit {line-height:0.9;}
         .text-right{text-align:right;}
         .mono{font-family:monospace;}
         .border{border: 1px solid black;}
@@ -46,10 +48,12 @@ class Printer extends \Mpdf\Mpdf
         .text-2xs {font-size:8px;}
         .text-xs {font-size:10px;}
         .text-sm {font-size:12px;}
+        .text-base{font-size:16px;}
         .text-lg {font-size:24px;}
         .text-xl {font-size:32px;}
         .text-2xl {font-size:60px;}
         .w-full{width:100%;}
+        .w-1/2{width:%0%;}
         .table-info {font-size:18px;font-family:Verdana,monospace;width:100%;}
         .table-info tr td:nth-child(1) {font-weight:bold;}
         .table-info tr td:nth-child(2) {font-weight:bold;text-align:right;}
