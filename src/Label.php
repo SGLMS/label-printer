@@ -21,7 +21,10 @@ use Mpdf\Mpdf;
 use Sglms\Gs1Gtin\Gtin;
 use Sglms\Gs1Gtin\Gs1;
 
+use function JamesRCZ\HtmlBuilder\a;
 use function JamesRCZ\HtmlBuilder\div;
+use function JamesRCZ\HtmlBuilder\p;
+use function JamesRCZ\HtmlBuilder\span;
 
 /**
  * Label Class
@@ -65,14 +68,15 @@ class Label
     ";
 
 
-    public int      $productid;
-    public string   $productName;
-    public string   $clientid;
-    public string   $clientName;
-    public string   $sku;
-    public float    $weight = 0;
-    public float    $units  = 0;
-    public string   $generator = "SGLMS Label Printer";
+    public int        $number;
+    public int|string $productid;
+    public string     $productName;
+    public int|string $clientid;
+    public string     $clientName;
+    public string     $sku;
+    public float      $weight = 0;
+    public float      $units  = 0;
+    public string     $generator = "SGLMS Label Printer";
 
     /**
      * Constructor
@@ -84,19 +88,24 @@ class Label
      * @param $clientName  Client [Optional]
      **/
     public function __construct(
-        int $number,
-        int $productid,
-        string $clientid,
-        ?string $productName = null,
-        ?string $clientName  = null
+        int        $number,
+        int|string $productid,
+        int|string $clientid = "CLIENT",
+        ?string    $productName = null,
+        ?string    $clientName  = null
     ) {
         $this->number       = $number;
         $this->clientid     = $clientid ?? '1';
-        $this->clientName   = $clientName ?? $this->clientid;
+        $this->clientName   = $clientName ?: (string) $this->clientid;
         $this->productid    = $productid ?? 1;
-        $this->productName  = $productName ?? _("n/a");
+        $this->productName  = $productName ?? "_";
         $this->sku          = (string) $number;
-        $this->gtin         = Gtin::create($this->productid, $this->clientid, 'GTIN-14',  2);
+        $this->gtin         = Gtin::create(
+            $this->productid,
+            (string) $this->clientid,
+            'GTIN-14',
+            2
+        );
         $this->gs1          = new Gs1("(01)" . $this->gtin);
     }
 
@@ -260,7 +269,51 @@ class Label
                 'center bold border m-1' . (strlen((string) $this->number) > 9 ? ' text-xl ' : ' text-2xl ')
             )
         );
-        $this->html->addContent($this->getInfoTable());
+        $this->html->addContent(
+            div(
+                $this->clientName,
+                [
+                    'class' => 'text-center text-xl bold',
+                    'style' => ''
+                ]
+            )
+        );
+        $this->html->addContent(
+            div(
+                sprintf(
+                    "[%s] %s",
+                    $this->productid,
+                    substr($this->productName, 0, 32)
+                ),
+                [
+                    'class' => 'text-center text-lg bold line-fit',
+                    'style' => 'margin-bottom:5px;'
+                ]
+            )
+        );
+        $this->html->addContent(
+            div(
+                div(_("SKU"), ['style'=>"width:20%; float:left;"])
+                .div($this->sku, ['style'=>"width:79%;float:left;"]),
+                'border text-sm p-1'
+            )
+        );
+        if ($this->units) {
+            $this->html->addContent(
+                div(
+                    div(_("Units / Weight"), ['style'=>"width:35%; float:left;"])
+                    .div(
+                        $this->units . " x "
+                        . round($this->weight / $this->units, 1)
+                        . " = "
+                        . span($this->weight . "Kg.", 'bold'),
+                        ['style'=>"width:64%;float:left;text-align:right;"]
+                    ),
+                    'border text-sm p-1'
+                )
+            );
+        }
+        /* $this->html->addContent($this->getInfoTable()); */
         /* $this->html->addContent($this->getGtinTag()); */
         $this->html->addContent($this->getGs1Tag());
         $this->html->addContent(div("__________", 'text-right text-2xs'));

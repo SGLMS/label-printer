@@ -20,9 +20,9 @@ define('TMPPATH', '/tmp'); // ¡¡¡IMPORTANT!!!
 
 $label              = new Label(12345678901234, 555, '777');
 $label->clientName  = "SGLMS";
-$label->productName = "Producto para Demostración";
+$label->productName = "Producto para Demostración con nombre muy largo";
 $label->sku         = "PRDCTNN-XX-DS-12345678-123456789000000";
-$label->firm        = "SGLMS";
+$label->generator   = "SGLMS";
 
 // Get additional product information from GS1-128
 $label->fromGS1("(01)11230000456781(37)18(3302)987654(3102)123456");
@@ -34,7 +34,7 @@ $printer = new Printer();
 $printer->addLabel($label);
 $printer->addPage();
 
-$label2  = new Label(987654, 555, '777');
+$label2  = new Label(987654, 0);
 $printer->addLabel($label2);
 
 $printer->output();
