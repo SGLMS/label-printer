@@ -281,9 +281,9 @@ class Label
                     div(_("Units / Weight"), ['style'=>"width:35%; float:left;"])
                     .div(
                         $this->units . " x "
-                        . round($this->weight / $this->units, 1)
+                        . round($this->weight / $this->units, 1). "Kg"
                         . " = "
-                        . span($this->weight . "Kg.", 'bold'),
+                        . span($this->weight . "Kg", 'bold'),
                         ['style'=>"width:64%;float:left;text-align:right;"]
                     ),
                     'border text-sm p-1'
