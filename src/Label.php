@@ -51,6 +51,8 @@ class Label
     protected string              $css = "
         .bold{font-weight:bold;}
         .center{text-align:center;}
+        .text-center{text-align:center;}
+        .line-fit {line-height:0.9;}
         .text-right{text-align:right;}
         .mono{font-family:monospace;}
         .border{border: 1px solid black;}
@@ -59,12 +61,15 @@ class Label
         .text-2xs {font-size:8px;}
         .text-xs {font-size:10px;}
         .text-sm {font-size:12px;}
-        .text-xl {font-size:36px;}
+        .text-base{font-size:16px;}
+        .text-lg {font-size:24px;}
+        .text-xl {font-size:32px;}
         .text-2xl {font-size:60px;}
         .w-full{width:100%;}
-        .table-info {font-size:11px;font-family:monospace;width:100%;}
-        .table-info tr td:nth-child(2) {font-weight:bold;}
-        .table-info tr td:nth-child(3) {font-weight:bold;text-align:right;}
+        .w-1/2{width:%0%;}
+        .table-info {font-size:18px;font-family:Verdana,monospace;width:100%;}
+        .table-info tr td:nth-child(1) {font-weight:bold;}
+        .table-info tr td:nth-child(2) {font-weight:bold;text-align:right;}
     ";
 
 
@@ -77,6 +82,7 @@ class Label
     public float      $weight = 0;
     public float      $units  = 0;
     public string     $generator = "SGLMS Label Printer";
+    public \DateTime  $date;
 
     /**
      * Constructor
@@ -86,19 +92,21 @@ class Label
      * @param $clientid    Client Identifier [Optional]
      * @param $productName Product Name [Optional]
      * @param $clientName  Client [Optional]
+     * @param $date        Date [Optional]
      **/
     public function __construct(
         int        $number,
-        int|string $productid,
-        int|string $clientid = "CLIENT",
+        ?int       $productid   = 1,
+        ?string    $clientid    = "CLIENTID",
         ?string    $productName = null,
-        ?string    $clientName  = null
+        ?string    $clientName  = null,
+        string     $date        = 'now'
     ) {
         $this->number       = $number;
         $this->clientid     = $clientid ?? '1';
         $this->clientName   = $clientName ?: (string) $this->clientid;
         $this->productid    = $productid ?? 1;
-        $this->productName  = $productName ?? "_";
+        $this->productName  = $productName ?? "PRODUCT NAME";
         $this->sku          = (string) $number;
         $this->gtin         = Gtin::create(
             $this->productid,
@@ -107,6 +115,7 @@ class Label
             2
         );
         $this->gs1          = new Gs1("(01)" . $this->gtin);
+        $this->date         = (new \DateTime($date));
     }
 
     /**
@@ -191,43 +200,6 @@ class Label
     }
 
     /**
-     * Build Table with Client Product information
-     *
-     * @return \JamesRCZ\HtmlBuilder\HtmlBuilder
-     **/
-    protected function getInfoTable()
-    {
-        $table = Html::table(
-            [
-                [
-                    /* _("SKU"), */
-                    substr($this->sku, 0, 24),
-                    ''
-                ],
-                [
-                    /* _("Weight")."/"._("Units"), */
-                    "(&times;" . (string) $this->units . ") " . _("Unit") . " =>",
-                    (string) $this->weight . "K",
-                ],
-                [
-                    /* _("Product"), */
-                    substr($this->productName, 0, 24),
-                    (string) $this->productid,
-                ],
-                [
-                    /* _("Client"), */
-                    $this->clientName,
-                    "ID" . $this->clientid
-                ],
-            ],
-            [],
-            [],
-            'table-info'
-        );
-        return $table;
-    }
-
-    /**
      * Generate Label (PDF)
      *
      * @return \Mpdf\Mpdf
@@ -256,24 +228,19 @@ class Label
             $this->html->addContent(HtmlBuilder::create('style', $this->css));
         }
         $this->html->addContent(
-            div(
-                (string) $this->getLabelBarcode(),
-                [
-                    'class' => 'center page-break-before',
-                ]
-            )
+            div((string) $this->getLabelBarcode(), 'center')
         );
         $this->html->addContent(
             div(
                 (string) $this->number,
-                'center bold border m-1' . (strlen((string) $this->number) > 9 ? ' text-xl ' : ' text-2xl ')
+                'center bold border m-1 line-fit' . (strlen((string) $this->number) > 9 ? ' text-xl ' : ' text-2xl ')
             )
         );
         $this->html->addContent(
             div(
-                $this->clientName,
+                substr($this->clientName, 0, 48),
                 [
-                    'class' => 'text-center text-xl bold',
+                    'class' => 'text-center text-lg line-fit bold',
                     'style' => ''
                 ]
             )
@@ -283,18 +250,28 @@ class Label
                 sprintf(
                     "[%s] %s",
                     $this->productid,
-                    substr($this->productName, 0, 32)
+                    substr($this->productName, 0, 48)
                 ),
                 [
-                    'class' => 'text-center text-lg bold line-fit',
-                    'style' => 'margin-bottom:5px;'
+                    'class' => 'text-center bold line-fit',
+                    'style' => 'margin:5px 0;'
                 ]
             )
         );
         $this->html->addContent(
             div(
+                div(_("Date"), ['style'=>"width:20%; float:left;"])
+                . div(
+                    $this->date->format("Y-m-d"),
+                    ['style'=>"width:79%;float:left;font-weight:bold;"]
+                ),
+                'border text-sm p-1'
+            )
+        );
+        $this->html->addContent(
+            div(
                 div(_("SKU"), ['style'=>"width:20%; float:left;"])
-                .div($this->sku, ['style'=>"width:79%;float:left;"]),
+                .div($this->sku, ['style'=>"width:79%;float:left;font-weight:bold;"]),
                 'border text-sm p-1'
             )
         );
@@ -313,7 +290,6 @@ class Label
                 )
             );
         }
-        /* $this->html->addContent($this->getInfoTable()); */
         /* $this->html->addContent($this->getGtinTag()); */
         $this->html->addContent($this->getGs1Tag());
         $this->html->addContent(div("__________", 'text-right text-2xs'));
@@ -321,7 +297,7 @@ class Label
             div(
                 $this->generator,
                 [
-                    'class' => 'text-2xs text-right',
+                    'class' => 'text-xs bold text-right',
                 ]
             )
         );
