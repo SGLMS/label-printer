@@ -18,11 +18,11 @@ require "vendor/autoload.php";
 
 define('TMPPATH', '/tmp'); // ¡¡¡IMPORTANT!!!
 
-$label              = new Label(12345678901234, 555, '777');
-$label->clientName  = "SGLMS";
-$label->productName = "Producto para Demostración con nombre muy largo";
+$label              = new Label(123454, 555);
+$label->clientName  = "PRODUCT OWNER NAME OR IDENTIFICATION";
+$label->productName = "Product Name (this can be a long name)";
 $label->sku         = "PRDCTNN-XX-DS-12345678-123456789000000";
-$label->generator   = "SGLMS";
+$label->generator   = "SGLMS TAILOR-MADE SOFTWARE SOLUTIONS";
 
 // Get additional product information from GS1-128
 $label->fromGS1("(01)11230000456781(37)18(3302)987654(3102)123456");
@@ -32,9 +32,13 @@ $printer = new Printer();
 
 // Add labels
 $printer->addLabel($label);
-$printer->addPage();
 
-$label2  = new Label(987654, 0);
+// One line
+$label1  = new Label(9876540, 0, 'ClientID', 'Product Name', 'Client Name', '-5day');
+$printer->addLabel($label1);
+
+// Missing values
+$label2  = new Label(9876541);
 $printer->addLabel($label2);
 
 $printer->output();

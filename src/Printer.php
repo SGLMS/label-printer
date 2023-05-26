@@ -15,6 +15,8 @@ declare(strict_types=1);
 
 namespace Sglms\LabelPrinter;
 
+use function JamesRCZ\HtmlBuilder\div;
+
 /**
  * Label Class
  *
@@ -29,10 +31,10 @@ class Printer extends \Mpdf\Mpdf
     protected array               $pdfConfiguration = [
         'mode'          => "utf-8",
         'format'        => [100,100],
-        'margin_top'    => 5,
-        'margin_bottom' => 5,
-        'margin_left'   => 5,
-        'margin_right'  => 5,
+        'margin_top'    => 4,
+        'margin_bottom' => 4,
+        'margin_left'   => 4,
+        'margin_right'  => 4,
         'tempDir'       => TMPPATH
     ];
     protected string              $css = "
@@ -58,6 +60,8 @@ class Printer extends \Mpdf\Mpdf
         .table-info tr td:nth-child(1) {font-weight:bold;}
         .table-info tr td:nth-child(2) {font-weight:bold;text-align:right;}
     ";
+    protected int   $pageNumber = 1;
+    protected array $printLog   = [];
 
     /**
      * Constructor
@@ -76,12 +80,27 @@ class Printer extends \Mpdf\Mpdf
     /**
      * Add Label
      *
+     * Make sure each label is printed in a separate page.
+     *
      * @param $label \Sglms\LabelPrinter\Label
      *
-     * @return void
+     * @return array
      **/
-    public function addLabel(\Sglms\LabelPrinter\Label $label): void
+    public function addLabel(\Sglms\LabelPrinter\Label $label): array
     {
-        $this->WriteHTML($label->render());
+        if (!$this->printLog
+            || ($label->number != $this->printLog [array_key_last($this->printLog)])
+        ) {
+            $this->printLog [] = $label->number;
+            $this->WriteHTML(
+                div(
+                    $label->render(),
+                    $this->pageNumber > 1 ?
+                        ['style' => 'page-break-before:always'] : []
+                ),
+            );
+            $this->pageNumber++;
+        }
+        return $this->printLog;
     }
 }
