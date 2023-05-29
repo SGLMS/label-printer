@@ -64,7 +64,7 @@ class Label
         .text-base{font-size:16px;}
         .text-lg {font-size:24px;}
         .text-xl {font-size:32px;}
-        .text-2xl {font-size:60px;}
+        .text-2xl {font-size:64px;}
         .w-full{width:100%;}
         .w-1/2{width:%0%;}
         .table-info {font-size:18px;font-family:Verdana,monospace;width:100%;}
@@ -164,7 +164,7 @@ class Label
             null,
             [
                 'src'   => $this->gs1->getBarcodeSource(1, 32),
-                'style' => "width: 8.75cm; height: 1cm;",
+                'style' => "width: 8.75cm; height: 0.8cm;",
                 'class' => "w-full"
             ]
         );
@@ -238,10 +238,10 @@ class Label
         );
         $this->html->addContent(
             div(
-                substr($this->clientName, 0, 48),
+                substr($this->clientName, 0, 32),
                 [
-                    'class' => 'text-center text-lg line-fit bold',
-                    'style' => ''
+                    'class' => 'text-center line-fit bold',
+                    'style' => 'font-size:32px;'
                 ]
             )
         );
@@ -250,11 +250,11 @@ class Label
                 sprintf(
                     "[%s] %s",
                     $this->productid,
-                    substr($this->productName, 0, 48)
+                    substr($this->productName, 0, 42)
                 ),
                 [
                     'class' => 'text-center bold line-fit',
-                    'style' => 'margin:5px 0;'
+                    'style' => 'margin:5px 0; font-size:24px;'
                 ]
             )
         );
@@ -262,8 +262,8 @@ class Label
             div(
                 div(_("Date"), ['style'=>"width:20%; float:left;"])
                 . div(
-                    $this->date->format("Y-m-d"),
-                    ['style'=>"width:79%;float:left;font-weight:bold;"]
+                    strftime('%x', $this->date->getTimestamp()), //format("Y-m-d"),
+                    ['style'=>"width:79%;float:left;font-weight:bold;font-size:18px;"]
                 ),
                 'border text-sm p-1'
             )
@@ -292,10 +292,11 @@ class Label
         }
         /* $this->html->addContent($this->getGtinTag()); */
         $this->html->addContent($this->getGs1Tag());
-        $this->html->addContent(div("__________", 'text-right text-2xs'));
+        /* $this->html->addContent(div("__________", 'text-right text-2xs')); */
         $this->html->addContent(
             div(
-                $this->generator,
+                $this->generator
+                . " / " . APP,
                 [
                     'class' => 'text-xs bold text-right',
                 ]
