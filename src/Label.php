@@ -100,7 +100,7 @@ class Label
         ?string    $clientid    = "CLIENTID",
         ?string    $productName = null,
         ?string    $clientName  = null,
-        string     $date        = 'now'
+        ?string    $date        = 'now'
     ) {
         $this->number       = $number;
         $this->clientid     = $clientid ?? '1';
@@ -135,9 +135,9 @@ class Label
         ?string $timezone = 'UTC'
     ): string {
         $lang       = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
-        $acceptLang = ['es','de'];
+        $acceptLang = ['es'];
         $lang       = in_array($lang, $acceptLang) ? $lang : $locale;
-        $formatter  = new \IntlDateFormatter($lang, 3, 3, $timezone);
+        $formatter  = new \IntlDateFormatter($lang, 2, -1, $timezone);
         return $formatter->format($date->getTimestamp());
     }
 
@@ -183,8 +183,8 @@ class Label
     protected function getGs1Tag()
     {
         return div(
-            div((string) $this->getGs1Barcode(), 'center p-1')
-            . div((string) $this->gs1, 'center text-2xs bold'),
+            div((string) $this->getGs1Barcode(), 'text-center p-1')
+            . div((string) $this->gs1, 'text-center text-2xs font-semibold'),
             'text-sm border'
         );
     }
@@ -216,8 +216,8 @@ class Label
     {
         return div(
             div("GTIN-14:", 'text-xs')
-            . div((string) HtmlBuilder::create('img', null, ['src'=> $this->gtin->getBarcodeSource(2, 24)]), 'center')
-            . div((string) $this->gtin, 'bold center text-sm mono'),
+            . div((string) HtmlBuilder::create('img', null, ['src'=> $this->gtin->getBarcodeSource(2, 24)]), 'text-center')
+            . div((string) $this->gtin, 'font-semibold text-center text-sm mono'),
             'text-sm border'
         );
     }
@@ -245,26 +245,24 @@ class Label
      **/
     public function render(?bool $html = false)
     {
-        $this->html = HtmlBuilder::create('div', null, 'mono');
-        if ($html) {
-            $this->html->setAttribute('style', "width:10cm;height:10cm;");
-            $this->html->addContent(HtmlBuilder::create('style', $this->css));
-        }
+        $this->html = HtmlBuilder::create('div', null, 'label');
         $this->html->addContent(
-            div((string) $this->getLabelBarcode(), 'center')
+            div(
+                (string) $this->getLabelBarcode(),
+                'barcode text-center'
+            )
         );
         $this->html->addContent(
             div(
                 (string) $this->number,
-                'center bold border m-1 line-fit' . (strlen((string) $this->number) > 9 ? ' text-xl ' : ' text-2xl ')
+                'number text-center font-bold border m-1 line-fit' . (strlen((string) $this->number) > 9 ? ' text-xl ' : ' text-3xl ')
             )
         );
         $this->html->addContent(
             div(
                 substr($this->clientName, 0, 32),
                 [
-                    'class' => 'text-center line-fit bold',
-                    'style' => 'font-size:32px;letter-spacing:0.01px;'
+                    'class' => 'text-center text-xl line-fit font-bold',
                 ]
             )
         );
@@ -275,8 +273,8 @@ class Label
                     substr($this->productName, 0, 64),
                 ),
                 [
-                    'class' => 'text-center bold line-fit',
-                    'style' => 'margin:4px 0; font-size:24px;letter-spacing:0.01px;'
+                    'class' => 'text-center text-lg font-bold line-fit',
+                    'style' => 'margin:4px 0;'
                 ]
             )
         );
@@ -284,7 +282,7 @@ class Label
             div(
                 div(
                     self::dateFormatter($this->date),
-                    ['style'=>"text-align:center;font-weight:bold;font-size:20px;"]
+                    ['class'=>"text-center font-bold text-lg"]
                 ),
                 [
                     'class' => 'p-1',
@@ -301,7 +299,7 @@ class Label
                         ['style'=>"width:79%;float:left;font-weight:bold;"]
                     ),
                     [
-                        'class' => 'text-sm ',
+                        'class' => 'text-sm text-right',
                         'style' => "border-top:1px dotted black;"
                     ]
                 )
@@ -317,11 +315,11 @@ class Label
                         $this->units . " x "
                         . round($this->weight / $this->units, 1). "Kg"
                         . " = "
-                        . span($this->weight . "Kg", 'bold'),
-                        ['style'=>"width:64%;float:left;text-align:right;"]
+                        . span($this->weight . "Kg", 'text-right font-bold'),
+                        ['class' => "text-right",'style'=>"width:64%;float:left;"]
                     ),
                     [
-                        'class' => 'text-sm ',
+                        'class' => 'text-sm',
                         'style' => "border-top:1px dotted black;"
                     ]
                 )
@@ -331,11 +329,10 @@ class Label
         }
         /* $this->html->addContent($this->getGtinTag()); */
         $this->html->addContent($this->getGs1Tag());
-        /* $this->html->addContent(div("__________", 'text-right text-2xs')); */
         $this->html->addContent(
             div(
                 $this->generator
-                . " / ",
+                . " / " . APP,
                 [
                     'style' => 'font-size:8px; text-align:right;',
                 ]
