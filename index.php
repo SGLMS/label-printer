@@ -18,10 +18,10 @@ require "vendor/autoload.php";
 
 define('TMPPATH', '/tmp'); // ¡¡¡IMPORTANT!!!
 
-$label              = new Label(123454, 555);
+$label              = new Label(123456, 555);
 $label->clientName  = "PRODUCT OWNER NAME OR IDENTIFICATION";
-$label->productName = "Product Name (this can be a long name)";
-$label->sku         = "PRDCTNN-XX-DS-12345678-123456789000000";
+$label->productName = "Product Name (this can be a long, long, long, very long, very long, very long name)";
+$label->sku         = "PRDCTNN-XX-DS-12345678-123456789";
 $label->generator   = "SGLMS TAILOR-MADE SOFTWARE SOLUTIONS";
 
 // Get additional product information from GS1-128

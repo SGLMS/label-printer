@@ -67,7 +67,7 @@ class Label
         .text-2xl {font-size:64px;}
         .w-full{width:100%;}
         .w-1/2{width:%0%;}
-        .table-info {font-size:18px;font-family:Verdana,monospace;width:100%;}
+        .table-info {font-size:18px;font-family:monospace;width:100%;}
         .table-info tr td:nth-child(1) {font-weight:bold;}
         .table-info tr td:nth-child(2) {font-weight:bold;text-align:right;}
     ";
@@ -119,6 +119,29 @@ class Label
     }
 
     /**
+     * Date Formatter
+     *
+     * PHP 8.1
+     *
+     * @param \DateTime $date     Date string
+     * @param mixed     $locale   Locale
+     * @param string    $timezone Timezone
+     *
+     * @return \IntlDateFormatter
+     */
+    public static function dateFormatter(
+        \DateTime|\DateTimeImmutable $date,
+        ?string $locale   = 'es_CL',
+        ?string $timezone = 'UTC'
+    ): string {
+        $lang       = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+        $acceptLang = ['es','de'];
+        $lang       = in_array($lang, $acceptLang) ? $lang : $locale;
+        $formatter  = new \IntlDateFormatter($lang, 3, 3, $timezone);
+        return $formatter->format($date->getTimestamp());
+    }
+
+    /**
      * Load info from GS1 String
      *
      * @param $gs1 GS1-128 String
@@ -147,8 +170,22 @@ class Label
             [
                 'src'   => "data:image/png;base64,"
                 . base64_encode($barcode->getBarcode((string) $this->number, $barcode::TYPE_CODE_128)),
-                'style' => "width: 8.75cm; height: 1cm;",
+                'style' => "width: 8.75cm; height: .8cm;",
             ]
+        );
+    }
+
+    /**
+     * Get GS1 Tag
+     *
+     * @return string
+     **/
+    protected function getGs1Tag()
+    {
+        return div(
+            div((string) $this->getGs1Barcode(), 'center p-1')
+            . div((string) $this->gs1, 'center text-2xs bold'),
+            'text-sm border'
         );
     }
 
@@ -164,7 +201,7 @@ class Label
             null,
             [
                 'src'   => $this->gs1->getBarcodeSource(1, 32),
-                'style' => "width: 8.75cm; height: 0.8cm;",
+                'style' => "width: 8.75cm; height: 0.6cm;",
                 'class' => "w-full"
             ]
         );
@@ -181,20 +218,6 @@ class Label
             div("GTIN-14:", 'text-xs')
             . div((string) HtmlBuilder::create('img', null, ['src'=> $this->gtin->getBarcodeSource(2, 24)]), 'center')
             . div((string) $this->gtin, 'bold center text-sm mono'),
-            'text-sm border'
-        );
-    }
-
-    /**
-     * Get GS1 Tag
-     *
-     * @return string
-     **/
-    protected function getGs1Tag()
-    {
-        return div(
-            div((string) $this->getGs1Barcode(), 'center p-1')
-            . div((string) $this->gs1, 'center text-2xs bold'),
             'text-sm border'
         );
     }
@@ -241,40 +264,51 @@ class Label
                 substr($this->clientName, 0, 32),
                 [
                     'class' => 'text-center line-fit bold',
-                    'style' => 'font-size:32px;'
+                    'style' => 'font-size:32px;letter-spacing:0.01px;'
                 ]
             )
         );
         $this->html->addContent(
             div(
                 sprintf(
-                    "[%s] %s",
-                    $this->productid,
-                    substr($this->productName, 0, 42)
+                    "%s",
+                    substr($this->productName, 0, 64),
                 ),
                 [
                     'class' => 'text-center bold line-fit',
-                    'style' => 'margin:5px 0; font-size:24px;'
+                    'style' => 'margin:4px 0; font-size:24px;letter-spacing:0.01px;'
                 ]
             )
         );
         $this->html->addContent(
             div(
-                div(_("Date"), ['style'=>"width:20%; float:left;"])
-                . div(
-                    strftime('%x', $this->date->getTimestamp()), //format("Y-m-d"),
-                    ['style'=>"width:79%;float:left;font-weight:bold;font-size:18px;"]
+                div(
+                    self::dateFormatter($this->date),
+                    ['style'=>"text-align:center;font-weight:bold;font-size:20px;"]
                 ),
-                'border text-sm p-1'
+                [
+                    'class' => 'p-1',
+                    'style' => "border-top:1px dashed black;"
+                ]
             )
         );
-        $this->html->addContent(
-            div(
-                div(_("SKU"), ['style'=>"width:20%; float:left;"])
-                .div($this->sku, ['style'=>"width:79%;float:left;font-weight:bold;"]),
-                'border text-sm p-1'
-            )
-        );
+        if ($this->sku != $this->number) {
+            $this->html->addContent(
+                div(
+                    div(_("SKU"), ['style'=>"width:20%; float:left;"])
+                    . div(
+                        $this->sku,
+                        ['style'=>"width:79%;float:left;font-weight:bold;"]
+                    ),
+                    [
+                        'class' => 'text-sm ',
+                        'style' => "border-top:1px dotted black;"
+                    ]
+                )
+            );
+        } else {
+            $this->html->addContent(div("-"));
+        }
         if ($this->units) {
             $this->html->addContent(
                 div(
@@ -286,9 +320,14 @@ class Label
                         . span($this->weight . "Kg", 'bold'),
                         ['style'=>"width:64%;float:left;text-align:right;"]
                     ),
-                    'border text-sm p-1'
+                    [
+                        'class' => 'text-sm ',
+                        'style' => "border-top:1px dotted black;"
+                    ]
                 )
             );
+        } else {
+            $this->html->addContent(div("-"));
         }
         /* $this->html->addContent($this->getGtinTag()); */
         $this->html->addContent($this->getGs1Tag());
@@ -296,9 +335,9 @@ class Label
         $this->html->addContent(
             div(
                 $this->generator
-                . " / " . APP,
+                . " / ",
                 [
-                    'class' => 'text-xs bold text-right',
+                    'style' => 'font-size:8px; text-align:right;',
                 ]
             )
         );
