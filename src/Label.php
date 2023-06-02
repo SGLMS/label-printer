@@ -239,11 +239,11 @@ class Label
     /**
      * Render Label
      *
-     * @param $html Render pure HTML [false]
+     * @param $maxProdCharWidth Line width
      *
      * @return string
      **/
-    public function render(?bool $html = false)
+    public function render(?int $maxProdCharWidth = 80)
     {
         $this->html = HtmlBuilder::create('div', null, 'label');
         $this->html->addContent(
@@ -270,7 +270,7 @@ class Label
             div(
                 sprintf(
                     "%s",
-                    substr($this->productName, 0, 64),
+                    substr($this->productName, 0, $maxProdCharWidth),
                 ),
                 [
                     'class' => 'text-center text-lg font-bold line-fit',
