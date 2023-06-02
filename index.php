@@ -17,6 +17,7 @@ use Sglms\LabelPrinter\Printer;
 require "vendor/autoload.php";
 
 define('TMPPATH', '/tmp'); // ¡¡¡IMPORTANT!!!
+define('APP', "SGLMS Label Printer");
 
 $label              = new Label(123456, 555);
 $label->clientName  = "PRODUCT OWNER NAME OR IDENTIFICATION";
@@ -28,7 +29,12 @@ $label->generator   = "SGLMS TAILOR-MADE SOFTWARE SOLUTIONS";
 $label->fromGS1("(01)11230000456781(37)18(3302)987654(3102)123456");
 
 // Create the printer (PDF)
-$printer = new Printer();
+$printer = new Printer(
+    [
+        'format' =>  [100,100],
+    ],
+    'resources/theme.css'
+);
 
 // Add labels
 $printer->addLabel($label);

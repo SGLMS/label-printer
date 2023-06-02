@@ -15,6 +15,8 @@ declare(strict_types=1);
 
 namespace Sglms\LabelPrinter;
 
+use JamesRCZ\HtmlBuilder\Html;
+
 use function JamesRCZ\HtmlBuilder\div;
 
 /**
@@ -35,42 +37,31 @@ class Printer extends \Mpdf\Mpdf
         'margin_bottom' => 4,
         'margin_left'   => 4,
         'margin_right'  => 4,
-        'tempDir'       => TMPPATH
+        'tempDir'       => TMPPATH  // Important
     ];
-    protected string              $css = "
-        .bold{font-weight:bold;}
-        .center{text-align:center;}
-        .text-center{text-align:center;}
-        .line-fit {line-height:0.9;}
-        .text-right{text-align:right;}
-        .mono{font-family:monospace;}
-        .border{border: 1px solid black;}
-        .m-1{margin: .1em;}
-        .p-1{padding: .1em;}
-        .text-2xs {font-size:8px;}
-        .text-xs {font-size:10px;}
-        .text-sm {font-size:12px;}
-        .text-base{font-size:16px;}
-        .text-lg {font-size:24px;}
-        .text-xl {font-size:32px;}
-        .text-2xl {font-size:60px;}
-        .w-full{width:100%;}
-        .w-1/2{width:%0%;}
-        .table-info {font-size:18px;font-family:Verdana,monospace;width:100%;}
-        .table-info tr td:nth-child(1) {font-weight:bold;}
-        .table-info tr td:nth-child(2) {font-weight:bold;text-align:right;}
-    ";
-    protected int   $pageNumber = 1;
-    protected array $printLog   = [];
+    protected int    $pageNumber = 1;
+    protected array  $printLog   = [];
+    public string $css;
 
     /**
      * Constructor
      *
-     * @param $config MPDF Configuration & Options
+     * @param ?array  $config  Config (MPDF configuration)
+     * @param ?string $cssFile CSS File [Optional]
      **/
-    public function __construct(array $config = [])
+    public function __construct(?array $config = [], ?string $cssFile = null)
     {
-        parent::__construct($config ?: $this->pdfConfiguration);
+        parent::__construct(
+            $config ?
+            array_merge($this->pdfConfiguration, $config) :
+            $this->pdfConfiguration
+        );
+        if ($cssFile && is_file($cssFile)) {
+            $this->css = file_get_contents($cssFile);
+        } else {
+            $this->css = '';
+        }
+        /* var_dump($this->css);die; */
         $this->WriteHTML(
             $this->css,
             \Mpdf\HTMLParserMode::HEADER_CSS
@@ -93,11 +84,14 @@ class Printer extends \Mpdf\Mpdf
         ) {
             $this->printLog [] = $label->number;
             $this->WriteHTML(
-                div(
-                    $label->render(),
-                    $this->pageNumber > 1 ?
-                        ['style' => 'page-break-before:always'] : []
-                ),
+                Html::create(
+                    'body',
+                    div(
+                        $label->render(),
+                        $this->pageNumber > 1 ?
+                            ['style' => 'page-break-before:always'] : []
+                    )
+                )
             );
             $this->pageNumber++;
         }
