@@ -77,8 +77,8 @@ class Label
     public int|string $productid;
     public string     $productName;
     public int|string $clientid;
-    public string     $clientName;
-    public string     $sku;
+    public ?string    $clientName;
+    public ?string    $sku;
     public float      $weight = 0;
     public float      $units  = 0;
     public string     $generator = "SGLMS Label Printer";
@@ -327,7 +327,6 @@ class Label
         } else {
             $this->html->addContent(div("-"));
         }
-        /* $this->html->addContent($this->getGtinTag()); */
         $this->html->addContent($this->getGs1Tag());
         $this->html->addContent(
             div(
