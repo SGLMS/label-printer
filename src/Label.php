@@ -290,7 +290,7 @@ class Label
                 ]
             )
         );
-        if ($this->sku != $this->number) {
+        if ($this->sku && $this->sku != $this->number) {
             $this->html->addContent(
                 div(
                     div(_("SKU"), ['style'=>"width:20%; float:left;"])
