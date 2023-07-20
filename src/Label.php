@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SGLMS Label Printer
  *
@@ -42,7 +43,7 @@ class Label
     protected \JamesRCZ\HtmlBuilder\HtmlBuilder $html;
     protected array               $pdfConfiguration = [
         'mode'          => "utf-8",
-        'format'        => [100,100],
+        'format'        => [100, 100],
         'margin_top'    => 5,
         'margin_bottom' => 5,
         'margin_left'   => 5,
@@ -169,7 +170,7 @@ class Label
             null,
             [
                 'src'   => "data:image/png;base64,"
-                . base64_encode($barcode->getBarcode((string) $this->number, $barcode::TYPE_CODE_128)),
+                    . base64_encode($barcode->getBarcode((string) $this->number, $barcode::TYPE_CODE_128)),
                 'style' => "width: 8.75cm; height: .8cm;",
             ]
         );
@@ -184,7 +185,7 @@ class Label
     {
         return div(
             div((string) $this->getGs1Barcode(), 'text-center p-1')
-            . div((string) $this->gs1, 'text-center text-2xs font-semibold'),
+                . div((string) $this->gs1, 'text-center text-2xs font-semibold'),
             'text-sm border'
         );
     }
@@ -216,8 +217,8 @@ class Label
     {
         return div(
             div("GTIN-14:", 'text-xs')
-            . div((string) HtmlBuilder::create('img', null, ['src'=> $this->gtin->getBarcodeSource(2, 24)]), 'text-center')
-            . div((string) $this->gtin, 'font-semibold text-center text-sm mono'),
+                . div((string) HtmlBuilder::create('img', null, ['src' => $this->gtin->getBarcodeSource(2, 24)]), 'text-center')
+                . div((string) $this->gtin, 'font-semibold text-center text-sm mono'),
             'text-sm border'
         );
     }
@@ -282,7 +283,7 @@ class Label
             div(
                 div(
                     self::dateFormatter($this->date),
-                    ['class'=>"text-center font-bold text-lg"]
+                    ['class' => "text-center font-bold text-lg"]
                 ),
                 [
                     'class' => 'p-1',
@@ -293,11 +294,11 @@ class Label
         if ($this->sku && $this->sku != $this->number) {
             $this->html->addContent(
                 div(
-                    div(_("SKU"), ['style'=>"width:20%; float:left;"])
-                    . div(
-                        $this->sku,
-                        ['style'=>"width:79%;float:left;font-weight:bold;"]
-                    ),
+                    div("SKU", ['style' => "width:20%; float:left;"])
+                        . div(
+                            $this->sku,
+                            ['style' => "width:79%;float:left;font-weight:bold;"]
+                        ),
                     [
                         'class' => 'text-sm text-right',
                         'style' => "border-top:1px dotted black;"
@@ -310,14 +311,14 @@ class Label
         if ($this->units) {
             $this->html->addContent(
                 div(
-                    div(_("Units / Weight"), ['style'=>"width:35%; float:left;"])
-                    .div(
-                        $this->units . " x "
-                        . round($this->weight / $this->units, 1). "Kg"
-                        . " = "
-                        . span($this->weight . "Kg", 'text-right font-bold'),
-                        ['class' => "text-right",'style'=>"width:64%;float:left;"]
-                    ),
+                    div("Units / Weight", ['style' => "width:35%; float:left;"])
+                        . div(
+                            $this->units . " x "
+                                . round($this->weight / $this->units, 1) . "Kg"
+                                . " = "
+                                . span($this->weight . "Kg", 'text-right font-bold'),
+                            ['class' => "text-right", 'style' => "width:64%;float:left;"]
+                        ),
                     [
                         'class' => 'text-sm',
                         'style' => "border-top:1px dotted black;"
@@ -331,7 +332,7 @@ class Label
         $this->html->addContent(
             div(
                 $this->generator
-                . " / " . APP,
+                    . " / " . APP,
                 [
                     'style' => 'font-size:8px; text-align:right;',
                 ]

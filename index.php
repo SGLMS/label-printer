@@ -16,7 +16,7 @@ use Sglms\LabelPrinter\Printer;
 
 require "vendor/autoload.php";
 
-define('TMPPATH', '/tmp'); // ¡¡¡IMPORTANT!!!
+define('TMPPATH', '/../tmp/'); // ¡¡¡IMPORTANT!!!
 define('APP', "SGLMS Label Printer");
 
 $label              = new Label(123456, 555);
