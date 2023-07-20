@@ -1,4 +1,5 @@
 <?php
+
 /**
  * SGLMS Label Printer
  *
@@ -32,7 +33,7 @@ class Printer extends \Mpdf\Mpdf
 {
     protected array               $pdfConfiguration = [
         'mode'          => "utf-8",
-        'format'        => [100,100],
+        'format'        => [100, 100],
         'margin_top'    => 4,
         'margin_bottom' => 4,
         'margin_left'   => 4,
@@ -53,8 +54,8 @@ class Printer extends \Mpdf\Mpdf
     {
         parent::__construct(
             $config ?
-            array_merge($this->pdfConfiguration, $config) :
-            $this->pdfConfiguration
+                array_merge($this->pdfConfiguration, $config) :
+                $this->pdfConfiguration
         );
         if ($cssFile && is_file($cssFile)) {
             $this->css = file_get_contents($cssFile);
@@ -79,14 +80,16 @@ class Printer extends \Mpdf\Mpdf
      **/
     public function addLabel(\Sglms\LabelPrinter\Label $label): array
     {
-        if (!$this->printLog
-            || ($label->number != $this->printLog [array_key_last($this->printLog)])
+        if (
+            !$this->printLog
+            || ($label->number != $this->printLog[array_key_last($this->printLog)])
         ) {
-            $this->printLog [] = $label->number;
+            $this->printLog[] = $label->number;
             $this->WriteHTML(
                 Html::create(
                     'body',
                     div(
+                        // "TODO: Temporary Content",
                         $label->render(),
                         $this->pageNumber > 1 ?
                             ['style' => 'page-break-before:always'] : []
