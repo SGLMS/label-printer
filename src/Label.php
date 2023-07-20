@@ -49,30 +49,6 @@ class Label
         'margin_left'   => 5,
         'margin_right'  => 5,
     ];
-    protected string              $css = "
-        .bold{font-weight:bold;}
-        .center{text-align:center;}
-        .text-center{text-align:center;}
-        .line-fit {line-height:0.9;}
-        .text-right{text-align:right;}
-        .mono{font-family:monospace;}
-        .border{border: 1px solid black;}
-        .m-1{margin: .1em;}
-        .p-1{padding: .1em;}
-        .text-2xs {font-size:8px;}
-        .text-xs {font-size:10px;}
-        .text-sm {font-size:12px;}
-        .text-base{font-size:16px;}
-        .text-lg {font-size:24px;}
-        .text-xl {font-size:32px;}
-        .text-2xl {font-size:64px;}
-        .w-full{width:100%;}
-        .w-1/2{width:%0%;}
-        .table-info {font-size:18px;font-family:monospace;width:100%;}
-        .table-info tr td:nth-child(1) {font-weight:bold;}
-        .table-info tr td:nth-child(2) {font-weight:bold;text-align:right;}
-    ";
-
 
     public int        $number;
     public int|string $productid;
@@ -84,6 +60,8 @@ class Label
     public float      $units  = 0;
     public string     $generator = "SGLMS Label Printer";
     public \DateTime  $date;
+    public int        $width  = 100;
+    public int        $height = 100;
 
     /**
      * Constructor
@@ -101,7 +79,7 @@ class Label
         ?string    $clientid    = "CLIENTID",
         ?string    $productName = null,
         ?string    $clientName  = null,
-        ?string    $date        = 'now'
+        ?string    $date        = 'now',
     ) {
         $this->number       = $number;
         $this->clientid     = $clientid ?? '1';
@@ -171,7 +149,7 @@ class Label
             [
                 'src'   => "data:image/png;base64,"
                     . base64_encode($barcode->getBarcode((string) $this->number, $barcode::TYPE_CODE_128)),
-                'style' => "width: 8.75cm; height: .8cm;",
+                'style' => (100 <= $this->height ? "width:85mm;height:8mm;" : "width:80mm;height:7mm;")
             ]
         );
     }
@@ -202,7 +180,8 @@ class Label
             null,
             [
                 'src'   => $this->gs1->getBarcodeSource(1, 32),
-                'style' => "width: 8.75cm; height: 0.6cm;",
+                // 'style' => "width: 8.75cm; height: 0.6cm;",
+                'style' => (100 < $this->height ? "width:100mm;height:10mm;" : "width:90mm;height:7mm;"),
                 'class' => "w-full"
             ]
         );
@@ -244,26 +223,31 @@ class Label
      *
      * @return string
      **/
-    public function render(?int $maxProdCharWidth = 80)
+    public function render(?int $maxProdCharWidth = 0)
     {
+        $maxProdCharWidth = $maxProdCharWidth ?: (int) round(min($this->width, $this->height) * .8);
         $this->html = HtmlBuilder::create('div', null, 'label');
         $this->html->addContent(
             div(
                 (string) $this->getLabelBarcode(),
-                'barcode text-center'
+                'barcode'
             )
         );
         $this->html->addContent(
             div(
                 (string) $this->number,
-                'number text-center font-bold border m-1 line-fit' . (strlen((string) $this->number) > 9 ? ' text-xl ' : ' text-3xl ')
+                [
+                    'class' => 'number'
+                        . (($this->width < 100 || $this->height < 100)  ? ' text-xl ' : ' text-3xl '),
+                ]
             )
         );
         $this->html->addContent(
             div(
-                substr($this->clientName, 0, 32),
+                substr($this->clientName, 0, (int) round($this->width * .32)),
                 [
-                    'class' => 'text-center text-xl line-fit font-bold',
+                    'class' => 'product'
+                        . ($this->width < 100 || $this->height < 100 ? ' text-lg ' : ' text-xl '),
                 ]
             )
         );
@@ -274,8 +258,8 @@ class Label
                     substr($this->productName, 0, $maxProdCharWidth),
                 ),
                 [
-                    'class' => 'text-center text-lg font-bold line-fit',
-                    'style' => 'margin:4px 0;'
+                    'class' => 'client'
+                        . ($this->width < 100 || $this->height < 100 ? ' text-md ' : ' text-lg ')
                 ]
             )
         );
@@ -283,7 +267,10 @@ class Label
             div(
                 div(
                     self::dateFormatter($this->date),
-                    ['class' => "text-center font-bold text-lg"]
+                    [
+                        'class' => "date"
+                            . ($this->width < 100 || $this->height < 100 ? ' text-base ' : ' text-lg '),
+                    ]
                 ),
                 [
                     'class' => 'p-1',
@@ -301,12 +288,12 @@ class Label
                         ),
                     [
                         'class' => 'text-sm text-right',
-                        'style' => "border-top:1px dotted black;"
+                        'style' => "border-top:2px double black;"
                     ]
                 )
             );
         } else {
-            $this->html->addContent(div("-"));
+            $this->html->addContent(div("&nbsp;"));
         }
         if ($this->units) {
             $this->html->addContent(
@@ -321,12 +308,11 @@ class Label
                         ),
                     [
                         'class' => 'text-sm',
-                        'style' => "border-top:1px dotted black;"
                     ]
                 )
             );
         } else {
-            $this->html->addContent(div("-"));
+            $this->html->addContent(div("&nbsp;"));
         }
         $this->html->addContent($this->getGs1Tag());
         $this->html->addContent(

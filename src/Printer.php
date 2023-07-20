@@ -31,7 +31,7 @@ use function JamesRCZ\HtmlBuilder\div;
  **/
 class Printer extends \Mpdf\Mpdf
 {
-    protected array               $pdfConfiguration = [
+    protected array $pdfConfiguration = [
         'mode'          => "utf-8",
         'format'        => [100, 100],
         'margin_top'    => 4,
@@ -50,19 +50,20 @@ class Printer extends \Mpdf\Mpdf
      * @param ?array  $config  Config (MPDF configuration)
      * @param ?string $cssFile CSS File [Optional]
      **/
-    public function __construct(?array $config = [], ?string $cssFile = null)
-    {
+    public function __construct(
+        ?array $config = [],
+        ?string $cssFile = null,
+    ) {
+        $this->pdfConfiguration = $config ?
+            array_merge($this->pdfConfiguration, $config) : $this->pdfConfiguration;
         parent::__construct(
-            $config ?
-                array_merge($this->pdfConfiguration, $config) :
-                $this->pdfConfiguration
+            $this->pdfConfiguration
         );
         if ($cssFile && is_file($cssFile)) {
             $this->css = file_get_contents($cssFile);
         } else {
             $this->css = '';
         }
-        /* var_dump($this->css);die; */
         $this->WriteHTML(
             $this->css,
             \Mpdf\HTMLParserMode::HEADER_CSS
@@ -80,6 +81,8 @@ class Printer extends \Mpdf\Mpdf
      **/
     public function addLabel(\Sglms\LabelPrinter\Label $label): array
     {
+        $label->width  = $this->pdfConfiguration['format'][0];
+        $label->height = $this->pdfConfiguration['format'][1];
         if (
             !$this->printLog
             || ($label->number != $this->printLog[array_key_last($this->printLog)])

@@ -21,11 +21,14 @@ body           { font-family: Helvetica, Verdana, monospace, serif;}
 .text-lg       { font-size:20px;}
 .text-xl       { font-size:32px;}
 .text-2xl      { font-size:48px;}
-.text-3xl      { font-size:64px;}
+.text-3xl      { font-size:60px;}
 
 .w-full        { width:100%;}
 .w-1/2         { width:%0%;}
 
 /* Specific */
-.label .barcode     {}
-.label .number      {}
+.label .barcode,
+.label .date        { text-align: center; font-weight: bold; }
+.label .number      { text-align: center; font-weight: bold; border: 1px solid black; margin: 2px; line-height:0.9; letter-spacing:0px; }
+.label .product,
+.label .client      { text-align: center; font-weight: bold; line-height:0.9; letter-spacing:0px; margin: 4px 0; }
