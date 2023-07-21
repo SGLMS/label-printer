@@ -42,7 +42,7 @@ $printer = new Printer(
     [
         'format' =>  [100, 100],
     ],
-    'resources/theme.css'
+    // 'resources/theme.css'
 );
 
 // Add labels
