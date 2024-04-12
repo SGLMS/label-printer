@@ -59,10 +59,11 @@ class Printer extends \Mpdf\Mpdf
         parent::__construct(
             $this->pdfConfiguration
         );
+        // var_dump($cssFile);die;
         if ($cssFile && is_file($cssFile)) {
             $this->css = file_get_contents($cssFile);
         } else {
-            $this->css = '';
+            $this->css = file_get_contents(__DIR__ . '/../resources/theme.css');
         }
         $this->WriteHTML(
             $this->css,
